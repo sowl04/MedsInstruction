@@ -146,12 +146,12 @@
 
 <script>
 const medsImages = {
-    "Metoprolol CR": "meds_app/metoprolol_cr.jpeg",
-    "Atorvastatin Calcium": "meds_app/atorvastatin_calcium.jpeg",
-    "Terazosin HCl": "meds_app/terazosin_hcl.jpeg",
-    "Losartan Potassium": "meds_app/losartan_potassium.jpeg",
-    "Amlodipine Besylate": "meds_app/amlodipine_besylate.jpeg",
-    "Methyldopa": "meds_app/methyldopa.jpeg"
+    "Metoprolol CR": "./metoprolol_cr.jpeg",
+    "Atorvastatin Calcium": "./atorvastatin_calcium.jpeg",
+    "Terazosin HCl": "./terazosin_hcl.jpeg",
+    "Losartan Potassium": "./losartan_potassium.jpeg",
+    "Amlodipine Besylate": "./amlodipine_besylate.jpeg",
+    "Methyldopa": "./methyldopa.jpeg"
 };
 const morningMeds = ["Metoprolol CR", "Methyldopa"];
 const afternoonMeds = ["Methyldopa"];
@@ -233,3 +233,4 @@ function closePopup() {
 </script>
 </body>
 </html>
+
