@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>藥物指引</title>
+    <style>
+        body {
+            font-family: Arial, "微軟正黑體", sans-serif;
+            background: #f7f7f7;
+            padding: 30px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        .time-btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .time-btn {
+            flex: 1;
+            padding: 10px 0;
+            background: #e0e0e0;
+            color: #333;
+            border: none;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .time-btn.selected {
+            background: #4CAF50;
+            color: #fff;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        button.show-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button.show-btn:hover {
+            background: #388E3C;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .med-list {
+            margin-top: 10px;
+        }
+        .med-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .med-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .popup-bg {
+            position: fixed;
+            top:0; left:0; right:0; bottom:0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .popup {
+            background: #fff;
+            padding: 25px 20px;
+            border-radius: 10px;
+            max-width: 350px;
+            width: 90%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .popup-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .close-btn {
+            background: #e53935;
+            color: #fff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>藥物提醒系統</h2>
+    <label>請選擇時間：</label>
+    <div class="time-btn-group">
+        <button type="button" class="time-btn" id="btn-morning" onclick="selectTime('morning', this)">早上</button>
+        <button type="button" class="time-btn" id="btn-afternoon" onclick="selectTime('afternoon', this)">下午</button>
+        <button type="button" class="time-btn" id="btn-evening" onclick="selectTime('evening', this)">晚上</button>
+    </div>
+
+    <label for="bp">請輸入上壓：</label>
+    <input type="number" id="bp" step="0.1" min="0" placeholder="請輸入數值">
+
+    <button class="show-btn" onclick="showMeds()">顯示藥物</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<!-- Popup for images -->
+<div id="popup-bg" style="display:none;">
+    <div class="popup">
+        <div class="popup-title">藥物圖片</div>
+        <div id="popup-content"></div>
+        <button class="close-btn" onclick="closePopup()">關閉</button>
+    </div>
+</div>
+
+<script>
+const medsImages = {
+    "Metoprolol CR": "metoprolol_cr.jpeg",
+    "Atorvastatin Calcium": "atorvastatin_calcium.jpeg",
+    "Terazosin HCl": "terazosin_hcl.jpeg",
+    "Losartan Potassium": "losartan_potassium.jpeg",
+    "Amlodipine Besylate": "amlodipine_besylate.jpeg",
+    "Methyldopa": "methyldopa.jpeg"
+};
+const morningMeds = ["Metoprolol CR", "Methyldopa"];
+const afternoonMeds = ["Methyldopa"];
+const eveningMeds = ["Atorvastatin Calcium", "Terazosin HCl", "Losartan Potassium", "Methyldopa"];
+
+let selectedTime = "";
+
+function selectTime(time, btn) {
+    selectedTime = time;
+    // Remove 'selected' from all buttons
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+    // Add 'selected' to the clicked button
+    btn.classList.add('selected');
+}
+
+function showMeds() {
+    const bpInput = document.getElementById('bp').value;
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = "";
+
+    let systolicPressure = parseFloat(bpInput);
+    if (isNaN(systolicPressure)) {
+        resultDiv.innerHTML = "請輸入正確的數字";
+        return;
+    }
+
+    let meds = [];
+    if (selectedTime === "morning") {
+        meds = [...morningMeds];
+    } else if (selectedTime === "afternoon") {
+        meds = [...afternoonMeds];
+    } else if (selectedTime === "evening") {
+        meds = [...eveningMeds];
+    } else {
+        resultDiv.innerHTML = "請選擇時間";
+        return;
+    }
+
+    if (systolicPressure > 120) {
+        if (!meds.includes("Amlodipine Besylate")) {
+            meds.push("Amlodipine Besylate");
+        }
+    } else if (systolicPressure < 100) {
+        meds = meds.filter(med => med !== "Methyldopa");
+    }
+
+    if (meds.length > 0) {
+        resultDiv.innerHTML = "請服用：<br>" + meds.join("<br>");
+        showPopup(meds);
+    } else {
+        resultDiv.innerHTML = "此時段無需服藥";
+    }
+}
+
+function showPopup(meds) {
+    const popupBg = document.getElementById('popup-bg');
+    const popupContent = document.getElementById('popup-content');
+    popupContent.innerHTML = "";
+    meds.forEach(med => {
+        const medDiv = document.createElement('div');
+        medDiv.className = "med-item";
+        if (medsImages[med]) {
+            const img = document.createElement('img');
+            img.src = medsImages[med];
+            img.alt = med;
+            medDiv.appendChild(img);
+        }
+        const label = document.createElement('span');
+        label.textContent = med;
+        medDiv.appendChild(label);
+        popupContent.appendChild(medDiv);
+    });
+    popupBg.style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById('popup-bg').style.display = "none";
+}
+</script>
+</body>
+</html>
