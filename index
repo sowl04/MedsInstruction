@@ -181,18 +181,10 @@ function showMeds() {
     let meds = [];
     if (selectedTime === "morning") {
         meds = [...morningMeds];
-        <img src="metopolol_cr" alt="metopolol_cr" width="200" height="150">
-        <img src="methyldopa" alt="methyldopa" width="200" height="150">
     } else if (selectedTime === "afternoon") {
         meds = [...afternoonMeds];
-        <img src="methyldopa" alt="methyldopa" width="200" height="150">
-        
     } else if (selectedTime === "evening") {
         meds = [...eveningMeds];
-        <img src="terazosin_hcl" alt="terazosin_hcl" width="200" height="150">
-        <img src="atorvastatin" alt="atorvastatin" width="200" height="150">
-        <img src="losartan_potassium" alt="losartan_potassium" width="200" height="150">
-        <img src="methyldopa" alt="methyldopa" width="200" height="150">
     } else {
         resultDiv.innerHTML = "請選擇時間";
         return;
@@ -241,4 +233,3 @@ function closePopup() {
 </script>
 </body>
 </html>
-
